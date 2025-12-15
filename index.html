@@ -5,6 +5,7 @@
     <title>mapa @ morava</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-ajax@2.1.0/dist/leaflet.ajax.js"></script>
     <style>
       #map {position: absolute; top: 0; right: 0; bottom: 0; left: 0;}
     </style>
@@ -29,6 +30,11 @@
           attribution: 'my',
           //crossOrigin: true
       }).addTo(map);
+
+      var geojsonLayer = new L.geoJson.ajax('./data.geojson')
+          .bindPopup(function (layer) {
+              return layer.feature.properties.popis;
+          }).addTo(map);
     </script>
   </body>
 </html>
