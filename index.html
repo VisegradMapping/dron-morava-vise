@@ -36,12 +36,12 @@
       var geojsonLayer = new L.geoJson.ajax('./data.geojson')
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
-          });
+          }).addTo(map);
 		var overlayLayers = {
 			"Krajina": geojsonLayer,
 		};
 
-		L.control.layers.(overlayLayers).addTo(map);
+		L.control.layers(overlayLayers).addTo(map);
     </script>
   </body>
 </html>
