@@ -37,6 +37,11 @@
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
           }).addTo(map);
+		var overlayLayers = {
+			"Krajina": geojsonLayer,
+		};
+
+		L.control.layers.(overlayLayers).addTo(map);
     </script>
   </body>
 </html>
