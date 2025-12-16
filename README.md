@@ -21,3 +21,12 @@
         * zoom 14-21
 * exportované dlaždice komprimovány `optipng`
     * cca 360 MiB → 310 MiB
+
+## fotointerpretace
+
+* TODO
+* export do GeoJSON
+
+## front-end
+
+* TODO
