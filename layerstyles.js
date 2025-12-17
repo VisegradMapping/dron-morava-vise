@@ -18,13 +18,19 @@ const pathLineStyle = {
 }
 
 const waterStyle = {
-    fillColor: '#a4d8e1',
+    fillColor: '#0094FF',
+    color: '#007b7f',
+    ...polyStyle
+};
+
+const sterkovnaStyle = {
+    fillColor: '#0026FF',
     color: '#007b7f',
     ...polyStyle
 };
 
 const riverLineStyle = {
-    color: '#a4d8e1',
+    color: '#0094FF',
     weight: 3
 }
 

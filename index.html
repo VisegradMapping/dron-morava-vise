@@ -64,7 +64,7 @@
           }).addTo(map);
 
       var waterLayer = new L.geoJson.ajax('./layers/water.json',
-                                          { style: waterStyle })
+                                          { style: sterkovnaStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
           }).addTo(map);
@@ -131,13 +131,12 @@
 	  
 		
 		function getColor(d) {
-			return d > 7 ? '#800026' :
-				d > 6  ? '#BD0026' :
-				d > 5  ? '#E31A1C' :
-				d > 4  ? '#FC4E2A' :
-				d > 3   ? '#FD8D3C' :
-				d > 2   ? '#FEB24C' :
-				d > 1   ? '#FED976' : '#FFEDA0';
+			return d > 6  ? '#E1B88Ds' :
+				d > 5  ? '#A8D8A0' :
+				d > 4  ? '#A8D8B9' :
+				d > 3   ? '#D1E7E0' :
+				d > 2   ? '#eef0d5' :
+				d > 1   ? '#0094FF' : '#0026FF';
 		}
 		const legend = L.control({position: 'bottomright'});
 
