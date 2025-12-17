@@ -23,6 +23,15 @@ const waterStyle = {
     ...polyStyle
 };
 
+const waterHoverStyle = {
+    fillColor: '#82c6d9',
+    color: '#005f63'
+};
+
+const waterLineHoverStyle = {
+    color: '#82c6d9'
+};
+
 const riverLineStyle = {
     color: '#a4d8e1',
     weight: 3

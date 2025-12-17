@@ -52,18 +52,36 @@
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
           });
+      riverPolyLayer.on('mouseover', function (e) {
+          this.setStyle({ ...waterStyle, ...waterHoverStyle });
+      });
+      riverPolyLayer.on('mouseout', function (e) {
+          this.setStyle(waterStyle);
+      });
 
       var riverLineLayer = new L.geoJson.ajax('./layers/riverline.json',
                                               { style: { ...waterStyle, ...riverLineStyle } })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
           }).addTo(map);
+      riverLineLayer.on('mouseover', function (e) {
+          this.setStyle({ ...waterStyle, ...riverLineStyle, ...waterLineHoverStyle });
+      });
+      riverLineLayer.on('mouseout', function (e) {
+          this.setStyle({ ...waterStyle, ...riverLineStyle });
+      });
 
       var waterLayer = new L.geoJson.ajax('./layers/water.json',
                                           { style: waterStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
           }).addTo(map);
+      waterLayer.on('mouseover', function (e) {
+          this.setStyle({ ...waterStyle, ...waterHoverStyle });
+      });
+      waterLayer.on('mouseout', function (e) {
+          this.setStyle(waterStyle);
+      });
 
       var gardenLayer = new L.geoJson.ajax('./layers/garden.json',
                                           { style: gardenStyle })
