@@ -10,8 +10,6 @@
 
 * TODO
 
-![Morava, 6. listopadu 2025](./morava.jpg)
-
 ## zpracování dat
 
 * snímky z dronu (cca 160), JPEG se souřadnicemi v EXIF
@@ -32,3 +30,5 @@
 ## front-end
 
 * TODO
+
+![Morava, 6. listopadu 2025](./morava_m.jpg)
