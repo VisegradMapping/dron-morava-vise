@@ -84,28 +84,16 @@
       });
 
       var gardenLayer = new L.geoJson.ajax('./layers/garden.json',
-                                          { style: gardenStyle })
-          .bindPopup(function (layer) {
-              return layer.feature.properties.popis;
-          });
+                                          { style: gardenStyle });
 
       var meadowLayer = new L.geoJson.ajax('./layers/meadow.json',
-                                          { style: meadowStyle })
-          .bindPopup(function (layer) {
-              return layer.feature.properties.popis;
-          });
+                                          { style: meadowStyle });
 
       var woodsLayer = new L.geoJson.ajax('./layers/woods.json',
-                                          { style: woodsStyle })
-          .bindPopup(function (layer) {
-              return layer.feature.properties.popis;
-          });
+                                          { style: woodsStyle });
 
       var fieldsLayer = new L.geoJson.ajax('./layers/fields.json',
-                                          { style: fieldsStyle })
-          .bindPopup(function (layer) {
-              return layer.feature.properties.popis;
-          });
+                                          { style: fieldsStyle });
 
       // layer control
       var pathGroup = L.layerGroup([pathPolyLayer, pathLineLayer]);
