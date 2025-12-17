@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta charset="UTF-8">
     <title>mapa @ morava</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-ajax@2.1.0/dist/leaflet.ajax.js"></script>
+    <script src="./layerstyles.js"></script>
     <style>
       #map {position: absolute; top: 0; right: 0; bottom: 0; left: 0;}
     </style>
@@ -24,76 +26,22 @@
 
       L.control.scale().addTo(map);
 
-      L.tileLayer(`tiles/{z}/{x}/{y}.png`,{
+      var mapBounds = new L.LatLngBounds(
+          new L.LatLng(49.52, 17.25),
+          new L.LatLng(49.54, 17.27));
+      var tileLayer = L.tileLayer(`tiles/{z}/{x}/{y}.png`, {
           tileSize: 256,
           //zoomOffset: -1,
+          bounds: mapBounds,
           maxZoom: 21,
           minZoom: 14,
-          attribution: 'my',
+          attribution: 'Kolibáč, Kovář, Sýkora',
+          errorTileUrl: 'tiles/404.png'
           //crossOrigin: true
       }).addTo(map);
 
-      const polyStyle = {
-          weight: 2,
-          fillOpacity: 0.7,
-          opacity: 1
-      };
-
-      const pathStyle = {
-          fillColor: '#eef0d5',
-          color: '#8b6a4a',
-          ...polyStyle,
-          fillOpacity: 0.5
-      };
-
-      const pathLineStyle = {
-          color: '#eef0d5',
-      }
-
-      const waterStyle = {
-          fillColor: '#a4d8e1',
-          color: '#007b7f',
-          ...polyStyle
-      };
-
-      const riverLineStyle = {
-          color: '#a4d8e1',
-      }
-
-      const gardenStyle = {
-          fillColor: '#D1E7E0',
-          color: '#4F7A7A',
-          ...polyStyle
-      };
-
-      const meadowStyle = {
-          fillColor: '#A8D8B9',
-          color: '#3A5D4C',
-          ...polyStyle
-      };
-
-      const woodsStyle = {
-          fillColor: '#A8D8A0',
-          color: '#5A8B3A',
-          ...polyStyle
-      };
-
-      const fieldsStyle = {
-          fillColor: '#DFAF6E',
-          color: '#A74F25',
-          ...polyStyle
-      };
-
-      const closePolyStyle = {
-          weight: 5,
-      }
-      const distantPolyStyle = {
-          weight: 2,
-      }
-
       var pathPolyLayer = new L.geoJson.ajax('./layers/pathpoly.json',
-                                             { style: pathStyle })
-          .addTo(map);
+                                             { style: pathStyle });
 
       var pathLineLayer = new L.geoJson.ajax('./layers/pathline.json',
                                              { style: { ...pathStyle, ...pathLineStyle } })
@@ -103,7 +51,7 @@
                                               { style: waterStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
-          }).addTo(map);
+          });
 
       var riverLineLayer = new L.geoJson.ajax('./layers/riverline.json',
                                               { style: { ...waterStyle, ...riverLineStyle } })
@@ -121,25 +69,39 @@
                                           { style: gardenStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
-          }).addTo(map);
+          });
 
       var meadowLayer = new L.geoJson.ajax('./layers/meadow.json',
                                           { style: meadowStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
-          }).addTo(map);
+          });
 
       var woodsLayer = new L.geoJson.ajax('./layers/woods.json',
                                           { style: woodsStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
-          }).addTo(map);
+          });
 
       var fieldsLayer = new L.geoJson.ajax('./layers/fields.json',
                                           { style: fieldsStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
-          }).addTo(map);
+          });
+
+      // layer control
+      var pathGroup = L.layerGroup([pathPolyLayer, pathLineLayer]);
+      var riverGroup = L.layerGroup([riverPolyLayer, riverLineLayer]);
+      var overlayLayers = {
+          "Blatecká štěrkovna": waterLayer,
+          "řeka Morava": riverGroup,
+          "cesty": pathGroup,
+          "zahrada": gardenLayer,
+          "louky": meadowLayer,
+          "les": woodsLayer,
+          "pole": fieldsLayer
+      };
+      L.control.layers(null, overlayLayers).addTo(map);
 
       // zoom control
       function manageLayerVisibility() {
@@ -161,13 +123,7 @@
           }
       }
       map.on('zoomend', manageLayerVisibility);
-
-      // layer overlay control
-      var overlayLayers = {
-	  'paths': pathLineLayer,
-          'water': waterLineLayer
-      };
-      L.control.layers(null, overlayLayers).addTo(map);
+      map.on('overlayadd', manageLayerVisibility);
 
     </script>
   </body>
