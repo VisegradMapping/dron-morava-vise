@@ -11,6 +11,7 @@ Martin - tvorba mapy na webu, pomoc se zpracováním dat
 * Zajímavá lokality, krásná příroda
 * potenciál být chráněným územím
 * Blatecká štěrkovna je rybářský revír
+* zajímavá turistická lokalita (polní cesta na břehu Moravy, alternativa k cyklostezkám přes vesnice)
 * původní záměr: Hlubočky
     * omezení letového provozu kvůli vojenskému prostoru Libavá
 
@@ -29,6 +30,8 @@ Martin - tvorba mapy na webu, pomoc se zpracováním dat
 ## sběr dat
 
 * TODO
+* limit 99 waypoints → let na dvě části
+* zapomenutá microSDHC karta ve dronu :-]
 
 ## zpracování dat
 
@@ -48,10 +51,12 @@ Martin - tvorba mapy na webu, pomoc se zpracováním dat
 * Nejprve polygony
 * Poté vybrané liniové prvky zmapovány (nejprve lesy, poté pole, louky, zahrada, řeka, slepá ramena  a na konec cesty)
 * Doplněny informace o řece Moravě, Blatecké štěrkovně a slepých ramenech do atributové tabulky (textový popis)
-
-*  TODO
 * export do GeoJSON
 
 ## front-end
 
+* GeoJSON rozsekán
+* generalizace polygon → linie při oddálení
 * TODO
+
+![Morava, 6. listopadu 2025](./morava_m.jpg)
