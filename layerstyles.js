@@ -19,13 +19,13 @@ const pathLineStyle = {
 
 const waterStyle = {
     fillColor: '#0094FF',
-    color: '#007b7f',
+    color: '#0094FF',
     ...polyStyle
 };
 
 const sterkovnaStyle = {
     fillColor: '#0026FF',
-    color: '#007b7f',
+    color: '#0026FF',
     ...polyStyle
 };
 
