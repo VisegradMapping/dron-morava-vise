@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-ajax@2.1.0/dist/leaflet.ajax.js"></script>
-    <script src="./layerstyles.js"></script>
+    <script src="./css/layerstyles.js"></script>
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
     <div class="row">
       <div class="column" id="text">
         <div id="text-content">
-	  <h1>Blatecká Štěrkovna</h1>
+	  <h1>Blatecká štěrkovna</h1>
 	  <p><b>Popis:</b></p>
 	  <p>Menší pískovna v&nbsp;záhybu bývalého meandru řeky Moravy (dnes odříznuté rameno) asi 0,8&nbsp;km severovýchodně od obce Charváty (okres Olomouc).</p>
 	  <p><b>Katastrální území:</b></p>
@@ -68,29 +68,33 @@
                                              { style: { ...pathStyle, ...pathLineStyle } })
           .addTo(map);
 
-      var riverPolyLayer = new L.geoJson.ajax('./layers/riverpoly.json',
-                                              { style: waterStyle })
-          .bindPopup(function (layer) {
-              return layer.feature.properties.popis;
-          });
-      riverPolyLayer.on('mouseover', function (e) {
-          this.setStyle({ ...waterStyle, ...waterHoverStyle });
-      });
-      riverPolyLayer.on('mouseout', function (e) {
-          this.setStyle(waterStyle);
+      var riverPolyLayer = new L.geoJson.ajax('./layers/riverpoly.json', {
+          style: waterStyle,
+          onEachFeature: function (feature, layer) {
+              layer.bindPopup(feature.properties.popis);
+
+              layer.on('mouseover', function () {
+                  layer.setStyle({ ...waterStyle, ...waterHoverStyle });
+              });
+              layer.on('mouseout', function () {
+                  layer.setStyle(waterStyle);
+              });
+          }
       });
 
-      var riverLineLayer = new L.geoJson.ajax('./layers/riverline.json',
-                                              { style: { ...waterStyle, ...riverLineStyle } })
-          .bindPopup(function (layer) {
-              return layer.feature.properties.popis;
-          }).addTo(map);
-      riverLineLayer.on('mouseover', function (e) {
-          this.setStyle({ ...waterStyle, ...riverLineStyle, ...waterLineHoverStyle });
-      });
-      riverLineLayer.on('mouseout', function (e) {
-          this.setStyle({ ...waterStyle, ...riverLineStyle });
-      });
+      var riverLineLayer = new L.geoJson.ajax('./layers/riverline.json', {
+          style: { ...waterStyle, ...riverLineStyle },
+          onEachFeature: function (feature, layer) {
+              layer.bindPopup(feature.properties.popis);
+
+              layer.on('mouseover', function () {
+                  layer.setStyle({ ...waterStyle, ...riverLineStyle, ...waterLineHoverStyle });
+              });
+              layer.on('mouseout', function () {
+                  layer.setStyle({ ...waterStyle, ...riverLineStyle });
+              });
+          }
+      }).addTo(map);
 
       var waterLayer = new L.geoJson.ajax('./layers/water.json',
                                           { style: sterkovnaStyle })
@@ -191,7 +195,7 @@
           onAdd: function(map) {
               const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
               const button = L.DomUtil.create('a', 'home-icon', container);
-              button.href = '#'; button.title = "Domů"; button.innerHTML = '🏠';
+              button.href = '#'; button.title = "Blatecká štěrkovna"; button.innerHTML = '🏠';
               button.onclick = function(e) { e.preventDefault(); map.setView([startingLat, startingLng], startingZoom); }
               L.DomEvent.disableClickPropagation(container);
               return container;
