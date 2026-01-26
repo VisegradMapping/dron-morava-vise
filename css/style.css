@@ -1,25 +1,15 @@
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0px;
-  background: #0094FF;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: #0094FF;
 }
 
 h1, h2, h3 {
-  margin: 20px;
-}
-
-#map {
-    position: absolute;
-    top: 10;
-    right: 0;
-    bottom: 0;
-    left: 10;
-    width: 50%;
-    height: 100%;
+    margin: 20px;
 }
 
 .info {
@@ -50,30 +40,51 @@ h1, h2, h3 {
     opacity: 0.7;
 }
 
-#text {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    bottom: 20px;
-    width: 40%;
-    height: 80%;
-    max-width: 85vw;
-    
+div.row {
+    display: flex;
+    height: 100vh;
+}
+
+div.column {
+    flex 1;
+}
+
+div#map {
+/*    width: calc(100% / 3 * 2);*/
+    width: 100%;
+    height: 100%;
+}
+
+div#text {
+    width: calc(100% / 3);
+    overflow-y: auto;
+
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(8px);
     border-radius: 14px; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     z-index: 2000;
-    
-    display: flex;
-    flex-direction: column;
-    
+
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     transform: translateX(0); 
 }
 
+@media (max-width: 800px) {
+    div.row {
+        display: flex;
+        flex-direction: column;
+    }
+    div#map {
+        width: 100%;
+        min-height: 50vh;
+    }
+    div#text {
+        overflow-y: auto;
+        width: 100%;
+    }
+}
+
 #text-content {
-    flex: 1;
     overflow-y: auto;
     padding: 0 25px 25px 25px;
     text-align: left;

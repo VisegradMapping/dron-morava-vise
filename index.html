@@ -11,25 +11,27 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <div id="text">
-      <div id="text-content">
-	<h1>Blatecká Štěrkovna</h1>
-	<p><b>Popis:</b></p>
-	<p>Menší pískovna v&nbsp;záhybu bývalého meandru řeky Moravy (dnes odříznuté rameno) asi 0,8&nbsp;km severovýchodně od obce Charváty (okres Olomouc).</p>
-	<p><b>Katastrální území:</b></p>
-	<p>Blatec</p>
-	<p><b>Rozloha:</b></p>
-	<p>1,1&nbsp;ha</p>
-	<p><b>GPS:</b></p>
-	<p>49°31'27.149"N, 17°15'51.832"E</p>
-	<p><b>Rybářský revír:</b></p>
-	<p>471 056 Morava –&nbsp;Olomoucké štěrkovny&nbsp;1A, 10.&nbsp;Blatecká</p>
-	<p><b>Přírodní stav lokality:</b></p>
-	<p>Pískovna se nachází na vnitřní straně záhybu bývalého meandru Moravy, dnes odříznutého od toku.<br>Kromě samotného meandru s&nbsp;břehovými dřevinnými porosty sousedí s&nbsp;pískovnou intenzivně obhospodařovaná louka. Širší okolí lokality tvoří pole. Pískovna je využívána pro rybolov a&nbsp;chov kachen.</p>
-	<p><b>Zdroj:</b> <a href="http://www.sagittaria.cz/cs/piskovny-charvaty">Sagittaria</a></p>
+    <div class="row">
+      <div class="column" id="text">
+        <div id="text-content">
+	  <h1>Blatecká Štěrkovna</h1>
+	  <p><b>Popis:</b></p>
+	  <p>Menší pískovna v&nbsp;záhybu bývalého meandru řeky Moravy (dnes odříznuté rameno) asi 0,8&nbsp;km severovýchodně od obce Charváty (okres Olomouc).</p>
+	  <p><b>Katastrální území:</b></p>
+	  <p>Blatec</p>
+	  <p><b>Rozloha:</b></p>
+	  <p>1,1&nbsp;ha</p>
+	  <p><b>GPS:</b></p>
+	  <p>49°31'27.149"N, 17°15'51.832"E</p>
+	  <p><b>Rybářský revír:</b></p>
+	  <p>471 056 Morava –&nbsp;Olomoucké štěrkovny&nbsp;1A, 10.&nbsp;Blatecká</p>
+	  <p><b>Přírodní stav lokality:</b></p>
+	  <p>Pískovna se nachází na vnitřní straně záhybu bývalého meandru Moravy, dnes odříznutého od toku.<br>Kromě samotného meandru s&nbsp;břehovými dřevinnými porosty sousedí s&nbsp;pískovnou intenzivně obhospodařovaná louka. Širší okolí lokality tvoří pole. Pískovna je využívána pro rybolov a&nbsp;chov kachen.</p>
+	  <p><b>Zdroj:</b> <a href="http://www.sagittaria.cz/cs/piskovny-charvaty">Sagittaria</a></p>
+        </div>
       </div>
-    </div>
-    <div id="map">
+      <div class="column" id="map">
+      </div>
     </div>
     <script>
       const startingLat = 49.523;  
@@ -39,10 +41,9 @@
 
       L.tileLayer(`https://api.mapy.cz/v1/maptiles/aerial/256/{z}/{x}/{y}?apikey=${'5ZtGuQEtvV37xyC_1IJnglc8ZgP53ehgvFqTiHuaFoI'}`, {
 	  minZoom: 0,
-		maxZoom: 19,
-		attribution: '<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
-	}).addTo(map);
-
+	  maxZoom: 19,
+	  attribution: '<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
+      }).addTo(map);
 
       L.control.scale().addTo(map);
 
@@ -104,16 +105,16 @@
       });
 
       var gardenLayer = new L.geoJson.ajax('./layers/garden.json',
-                                          { style: gardenStyle });
+                                           { style: gardenStyle });
 
       var meadowLayer = new L.geoJson.ajax('./layers/meadow.json',
-                                          { style: meadowStyle });
+                                           { style: meadowStyle });
 
       var woodsLayer = new L.geoJson.ajax('./layers/woods.json',
                                           { style: woodsStyle });
 
       var fieldsLayer = new L.geoJson.ajax('./layers/fields.json',
-                                          { style: fieldsStyle });
+                                           { style: fieldsStyle });
 
       // layer control
       var pathGroup = L.layerGroup([pathPolyLayer, pathLineLayer]);
@@ -127,7 +128,10 @@
           "Les": woodsLayer,
           "Pole": fieldsLayer
       };
-      L.control.layers(null, overlayLayers).addTo(map);
+      L.control.layers(null, overlayLayers, {
+          position: 'topright',
+          collapsed: true
+      }).addTo(map);
 
       // zoom control
       function manageLayerVisibility() {
@@ -150,50 +154,54 @@
       }
       map.on('zoomend', manageLayerVisibility);
       map.on('overlayadd', manageLayerVisibility);
-	  
-		
-		function getColor(d) {
-			return d > 6  ? '#E1B88D' :
-				d > 5   ? '#267F00' :
-				d > 4   ? '#00FF21' :
-				d > 3   ? '#B6FF00' :
-				d > 2   ? '#eef0d5' :
-				d > 1   ? '#0094FF' : '#0026FF';
-		}
-		const legend = L.control({position: 'bottomright'});
+      
+      
+      function getColor(d) {
+	  return d > 6  ? '#E1B88D' :
+	      d > 5   ? '#267F00' :
+	      d > 4   ? '#00FF21' :
+	      d > 3   ? '#B6FF00' :
+	      d > 2   ? '#eef0d5' :
+	      d > 1   ? '#0094FF' : '#0026FF';
+      }
+      const legend = L.control({position: 'bottomright'});
 
-		legend.onAdd = function (map) {
+      legend.onAdd = function (map) {
 
-		const div = L.DomUtil.create('div', 'info legend');
-		const grades = [0, 1, 2, 3, 4, 5, 6];
-		const nazvy = ["Blatecká Štěrkovna", "Morava", "Cesty", "Zahrada", "Louky", "Les", "Pole"];
-		const titleLeg = "<b>Rozdělení krajiny</b>"
-		const labels = [`${titleLeg}`];
-		let from, to;
+	  const div = L.DomUtil.create('div', 'info legend');
+	  const grades = [0, 1, 2, 3, 4, 5, 6];
+	  const nazvy = ["Blatecká Štěrkovna", "Morava", "Cesty", "Zahrada", "Louky", "Les", "Pole"];
+	  const titleLeg = "<b>Rozdělení krajiny</b>"
+	  const labels = [`${titleLeg}`];
+	  let from, to;
 
-		for (let i = 0; i < grades.length; i++) {
-			from = grades[i];
-			typy = nazvy[i];
-			to = grades[i + 1];
+	  for (let i = 0; i < grades.length; i++) {
+	      from = grades[i];
+	      typy = nazvy[i];
+	      to = grades[i + 1];
 
-			labels.push(`<i style="background:${getColor(from + 1)}"></i> ${typy}`);
-		}
+	      labels.push(`<i style="background:${getColor(from + 1)}"></i> ${typy}`);
+	  }
 
-		div.innerHTML = labels.join('<br>');
-		return div;
-	};
-	legend.addTo(map);
-	L.Control.Home = L.Control.extend({
-        onAdd: function(map) {
-            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-            const button = L.DomUtil.create('a', 'home-icon', container);
-            button.href = '#'; button.title = "Domů"; button.innerHTML = '🏠';
-            button.onclick = function(e) { e.preventDefault(); map.setView([startingLat, startingLng], startingZoom); }
-            L.DomEvent.disableClickPropagation(container);
-            return container;
-        },
-    });
-    map.addControl(new L.Control.Home({ position: 'topleft' }));
+	  div.innerHTML = labels.join('<br>');
+	  return div;
+      };
+      legend.addTo(map);
+      L.Control.Home = L.Control.extend({
+          onAdd: function(map) {
+              const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+              const button = L.DomUtil.create('a', 'home-icon', container);
+              button.href = '#'; button.title = "Domů"; button.innerHTML = '🏠';
+              button.onclick = function(e) { e.preventDefault(); map.setView([startingLat, startingLng], startingZoom); }
+              L.DomEvent.disableClickPropagation(container);
+              return container;
+          },
+      });
+      map.addControl(new L.Control.Home({ position: 'topleft' }));
+      
+      window.addEventListener('resize', () => {
+          map.invalidateSize();
+      });
     </script>
   </body>
 </html>
