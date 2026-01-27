@@ -40,9 +40,9 @@
       const map = L.map('map', {maxZoom:21, minZoom:14}).setView([startingLat, startingLng], startingZoom);
 
       L.tileLayer(`https://api.mapy.cz/v1/maptiles/aerial/256/{z}/{x}/{y}?apikey=${'5ZtGuQEtvV37xyC_1IJnglc8ZgP53ehgvFqTiHuaFoI'}`, {
-	  minZoom: 0,
-	  maxZoom: 19,
-	  attribution: '<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
+	        minZoom: 0,
+	        maxZoom: 19,
+	        attribution: '<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
       }).addTo(map);
 
       L.control.scale().addTo(map);
@@ -65,8 +65,7 @@
                                              { style: pathStyle });
 
       var pathLineLayer = new L.geoJson.ajax('./layers/pathline.json',
-                                             { style: { ...pathStyle, ...pathLineStyle } })
-          .addTo(map);
+                                             { style: { ...pathStyle, ...pathLineStyle } });
 
       var riverPolyLayer = new L.geoJson.ajax('./layers/riverpoly.json', {
           style: waterStyle,
@@ -94,18 +93,18 @@
                   layer.setStyle({ ...waterStyle, ...riverLineStyle });
               });
           }
-      }).addTo(map);
+      });
 
       var waterLayer = new L.geoJson.ajax('./layers/water.json',
                                           { style: sterkovnaStyle })
           .bindPopup(function (layer) {
               return layer.feature.properties.popis;
-          }).addTo(map);
+          });
       waterLayer.on('mouseover', function (e) {
           this.setStyle({ ...waterStyle, ...waterHoverStyle });
       });
       waterLayer.on('mouseout', function (e) {
-          this.setStyle(waterStyle);
+          this.setStyle({ ...waterStyle, ...sterkovnaStyle });
       });
 
       var gardenLayer = new L.geoJson.ajax('./layers/garden.json',
@@ -120,77 +119,145 @@
       var fieldsLayer = new L.geoJson.ajax('./layers/fields.json',
                                            { style: fieldsStyle });
 
+      // legend
+      var legendToggle = L.control({ position: 'topright' });
+
+      legendToggle.onAdd = function () {
+          var div = L.DomUtil.create('div', 'map-legend');
+
+          div.innerHTML = `
+              <div class="legend-title">Legenda</div>
+
+              <div class="legend-row" data-layer="water">
+                  <span class="legend-toggle water"></span>
+                  <span class="legend-label">Blatecká štěrkovna</span>
+              </div>
+
+              <div class="legend-row" data-layer="river">
+                  <span class="legend-toggle river"></span>
+                  <span class="legend-label river-label"></span>
+              </div>
+
+              <div class="legend-row" data-layer="path">
+                  <span class="legend-toggle path"></span>
+                  <span class="legend-label path-label"></span>
+              </div>
+
+              <div class="legend-row" data-layer="garden">
+                  <span class="legend-toggle garden"></span>
+                  <span class="legend-label">Zahrada</span>
+              </div>
+
+              <div class="legend-row" data-layer="meadow">
+                  <span class="legend-toggle meadow"></span>
+                  <span class="legend-label">Louky</span>
+              </div>
+
+              <div class="legend-row" data-layer="woods">
+                  <span class="legend-toggle woods"></span>
+                  <span class="legend-label">Les</span>
+              </div>
+
+              <div class="legend-row" data-layer="fields">
+                  <span class="legend-toggle fields"></span>
+                  <span class="legend-label">Pole</span>
+              </div>
+          `;
+
+          L.DomEvent.disableClickPropagation(div);
+          return div;
+      };
+      legendToggle.addTo(map);
+
       // layer control
       var pathGroup = L.layerGroup([pathPolyLayer, pathLineLayer]);
       var riverGroup = L.layerGroup([riverPolyLayer, riverLineLayer]);
-      var overlayLayers = {
-          "Blatecká štěrkovna": waterLayer,
-          "Řeka Morava": riverGroup,
-          "Cesty": pathGroup,
-          "Zahrada": gardenLayer,
-          "Louky": meadowLayer,
-          "Les": woodsLayer,
-          "Pole": fieldsLayer
+
+      var layerRegistry = {
+          water:  waterLayer,
+          garden: gardenLayer,
+          meadow: meadowLayer,
+          woods:  woodsLayer,
+          fields: fieldsLayer,
+          path:   pathGroup,
+          river:  riverGroup
       };
-      L.control.layers(null, overlayLayers, {
-          position: 'topright',
-          collapsed: true
-      }).addTo(map);
 
-      // zoom control
-      function manageLayerVisibility() {
-          var zoomLevel = map.getZoom();
+      map.addLayer(waterLayer);
+      map.addLayer(riverGroup);
+      map.addLayer(pathGroup);
 
-          if (zoomLevel >= 17) {
-              if (!map.hasLayer(pathPolyLayer))  { map.addLayer(pathPolyLayer); }
-              if (map.hasLayer(pathLineLayer))   { map.removeLayer(pathLineLayer); }
-              if (!map.hasLayer(riverPolyLayer)) { map.addLayer(riverPolyLayer); }
-              if (map.hasLayer(riverLineLayer))  { map.removeLayer(riverLineLayer); }
-              riverPolyLayer.setStyle(closePolyStyle);
-              waterLayer.setStyle(closePolyStyle);
+      document.querySelector('.map-legend').addEventListener('click', function (e) {
+          var row = e.target.closest('.legend-row');
+          if (!row) return;
+
+          var key = row.dataset.layer;
+          var layer = layerRegistry[key];
+
+          if (map.hasLayer(layer)) {
+              map.removeLayer(layer);
           } else {
-              if (map.hasLayer(pathPolyLayer))   { map.removeLayer(pathPolyLayer); }
-              if (!map.hasLayer(pathLineLayer))  { map.addLayer(pathLineLayer); }
-              if (map.hasLayer(riverPolyLayer))  { map.removeLayer(riverPolyLayer); }
-              if (!map.hasLayer(riverLineLayer)) { map.addLayer(riverLineLayer); }
-              waterLayer.setStyle(distantPolyStyle);
+              map.addLayer(layer);
+          }
+
+          syncZoomLayers();
+          updateLegendUI();
+      });
+
+      function syncZoomLayers() {
+          var zoom = map.getZoom();
+
+          if (map.hasLayer(pathGroup)) {
+              if (zoom >= 17) {
+                  map.addLayer(pathPolyLayer);
+                  map.removeLayer(pathLineLayer);
+              } else {
+                  map.addLayer(pathLineLayer);
+                  map.removeLayer(pathPolyLayer);
+              }
+          } else {
+              map.removeLayer(pathPolyLayer);
+              map.removeLayer(pathLineLayer);
+          }
+
+          if (map.hasLayer(riverGroup)) {
+              if (zoom >= 17) {
+                  map.addLayer(riverPolyLayer);
+                  map.removeLayer(riverLineLayer);
+              } else {
+                  map.addLayer(riverLineLayer);
+                  map.removeLayer(riverPolyLayer);
+              }
+          } else {
+              map.removeLayer(riverPolyLayer);
+              map.removeLayer(riverLineLayer);
           }
       }
-      map.on('zoomend', manageLayerVisibility);
-      map.on('overlayadd', manageLayerVisibility);
-      
-      
-      function getColor(d) {
-	  return d > 6  ? '#E1B88D' :
-	      d > 5   ? '#267F00' :
-	      d > 4   ? '#00FF21' :
-	      d > 3   ? '#B6FF00' :
-	      d > 2   ? '#eef0d5' :
-	      d > 1   ? '#0094FF' : '#0026FF';
+
+      function updateLegendUI() {
+          var zoom = map.getZoom();
+
+          document.querySelector('.path-label').textContent =
+              zoom >= 17 ? 'Cesty (plocha)' : 'Cesty (linie)';
+
+          document.querySelector('.river-label').textContent =
+              zoom >= 17 ? 'Řeka Morava (plocha)' : 'Řeka Morava (linie)';
+
+          document.querySelectorAll('.legend-row').forEach(row => {
+              var key = row.dataset.layer;
+              row.classList.toggle('active', map.hasLayer(layerRegistry[key]));
+          });
       }
-      const legend = L.control({position: 'bottomright'});
+      map.on('zoomend', function () {
+          syncZoomLayers();
+          updateLegendUI();
+      });
 
-      legend.onAdd = function (map) {
+      map.on('layeradd layerremove', updateLegendUI);
 
-	  const div = L.DomUtil.create('div', 'info legend');
-	  const grades = [0, 1, 2, 3, 4, 5, 6];
-	  const nazvy = ["Blatecká Štěrkovna", "Morava", "Cesty", "Zahrada", "Louky", "Les", "Pole"];
-	  const titleLeg = "<b>Rozdělení krajiny</b>"
-	  const labels = [`${titleLeg}`];
-	  let from, to;
+      syncZoomLayers();
+      updateLegendUI();
 
-	  for (let i = 0; i < grades.length; i++) {
-	      from = grades[i];
-	      typy = nazvy[i];
-	      to = grades[i + 1];
-
-	      labels.push(`<i style="background:${getColor(from + 1)}"></i> ${typy}`);
-	  }
-
-	  div.innerHTML = labels.join('<br>');
-	  return div;
-      };
-      legend.addTo(map);
       L.Control.Home = L.Control.extend({
           onAdd: function(map) {
               const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
@@ -202,7 +269,7 @@
           },
       });
       map.addControl(new L.Control.Home({ position: 'topleft' }));
-      
+
       window.addEventListener('resize', () => {
           map.invalidateSize();
       });

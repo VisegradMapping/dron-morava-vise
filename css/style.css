@@ -26,20 +26,6 @@ h1, h2, h3 {
     color: #777;
 }
 
-.legend {
-    text-align: left;
-    line-height: 18px;
-    color: #555;
-}
-
-.legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7;
-}
-
 div.row {
     display: flex;
     height: 100vh;
@@ -91,3 +77,49 @@ div#text {
     line-height: 1.6;
     color: #444;
 }
+
+.map-legend {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    min-width: 20vh;
+}
+
+.legend-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.legend-toggle {
+    width: 22px;
+    height: 12px;
+    border-radius: 6px;
+    margin-right: 8px;
+    opacity: 0.25;
+    transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.legend-row.active .legend-toggle {
+    opacity: 0.7;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+}
+
+.legend-toggle.water  { background: #0026FF; border-color: #007b7f }
+.legend-toggle.river  { background: #0094FF; border-color: #007b7f; }
+.legend-toggle.path   { background: #eef0d5; border-color: #8b6a4a; }
+.legend-toggle.garden { background: #B6FF00; border-color: #4F7A7A; }
+.legend-toggle.meadow { background: #00FF21; border-color: #3A5D4C; }
+.legend-toggle.woods  { background: #267F00; border-color: #5A8B3A; }
+.legend-toggle.fields { background: #E1B88D; border-color: #DFAF6E; }
